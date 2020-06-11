@@ -2,13 +2,19 @@ plugins {
     id 'java'
 }
 
-group 'sustain.analytics'
+group 'sustain.kNN'
 version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://github.com/Project-Sustain/synopsis-sketch/raw/mvn-repository'
+    }
 }
 
 dependencies {
+    implementation ('sustain-dht:common:0.1'){
+        version {branch = 'master'}
+    }
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
