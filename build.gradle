@@ -12,9 +12,28 @@ repositories {
     }
 }
 
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'sustain.kNN.preprocessing.SketchPreprocessor'
+        )
+    }
+}
+
 dependencies {
     implementation ('sustain-dht:common:0.1'){
         version {branch = 'master'}
     }
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.8.0'
+    testImplementation 'org.powermock:powermock-api-mockito2:1.7.0RC2'
+    testImplementation 'org.powermock:powermock-module-junit4:1.7.0'
+    testImplementation 'org.powermock:powermock-core:1.7.0'
+    testImplementation 'org.powermock:powermock-module-junit4-rule:1.7.0'
+    testImplementation 'org.hamcrest:hamcrest:2.1'
+
+    // https://mvnrepository.com/artifact/io.grpc/grpc-all
+    compile group: 'io.grpc', name: 'grpc-all', version: '1.26.0'
+
 }
