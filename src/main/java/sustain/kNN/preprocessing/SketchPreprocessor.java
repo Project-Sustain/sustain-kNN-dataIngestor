@@ -9,8 +9,6 @@ import sustain.synopsis.common.CommonUtil;
 import sustain.synopsis.common.ProtoBuffSerializedStrand;
 import sustain.synopsis.common.Strand;
 import sustain.synopsis.dht.store.services.*;
-import sustain.synopsis.sketch.serialization.SerializationOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,13 +23,17 @@ public class SketchPreprocessor {
 
         PropertyLoader.loadPropertyFile();
 
-        System.out.println("Host : " + PropertyLoader.getHost());
-        //loadSketches(host, port, dataset, geoHashes.split(Constants.SEPARATOR_COMMA), fromTimestamp, toTimestamp, intermediateOutFile);
+        try {
+            Map<String, Strand> aggregatedStrands = loadSketches();
 
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    /*private static void loadSketches() throws IOException, ValueNotFoundException {
+    private static Map<String, Strand> loadSketches() throws IOException, ValueNotFoundException {
         Channel channel = ManagedChannelBuilder.forAddress(PropertyLoader.getHost(), PropertyLoader.getPort()).usePlaintext().build();
         TargetedQueryServiceGrpc.TargetedQueryServiceBlockingStub stub =
                 TargetedQueryServiceGrpc.newBlockingStub(channel);
@@ -51,8 +53,8 @@ public class SketchPreprocessor {
                 Expression.newBuilder().setPredicate1(fromPredicate).setCombineOp(Expression.CombineOperator.AND)
                         .setPredicate2(toPredicate).build();
 
-        FileOutputStream fileOutputStream = new FileOutputStream(PropertyLoader.getIntermediateFile() + PropertyLoader.getDataset() + ".txt");
-        SerializationOutputStream dataOutputStream = new SerializationOutputStream(fileOutputStream);
+//        FileOutputStream fileOutputStream = new FileOutputStream(PropertyLoader.getIntermediateFile() + PropertyLoader.getDataset() + ".txt");
+//        SerializationOutputStream dataOutputStream = new SerializationOutputStream(fileOutputStream);
 
         // run queries for each of the geohashes
         Map<String, Strand> aggregatedStrands = new HashMap<>();
@@ -85,7 +87,7 @@ public class SketchPreprocessor {
 
         System.out.println("---- Aggregated Strands -----");
         System.out.println("Total Count: " + aggregatedStrands.size());
-        for (Strand s : aggregatedStrands.values()) {
+//        for (Strand s : aggregatedStrands.values()) {
 //            System.out.println("--");
 //            System.out.println("Geohash: " + s.getGeohash());
 //            System.out.println("From Timestamp: " + s.getFromTimeStamp());
@@ -98,8 +100,10 @@ public class SketchPreprocessor {
 //            System.out.println("Mins: " + Arrays.toString(stats.mins()));
 //            System.out.println("Maxes: " + Arrays.toString(stats.maxes()));
 
-            s.serialize(dataOutputStream);
-        }
-        dataOutputStream.close();
-    }*/
+//            s.serialize(dataOutputStream);
+//        }
+//        dataOutputStream.close();
+
+        return aggregatedStrands;
+    }
 }
