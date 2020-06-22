@@ -1,5 +1,6 @@
 package sustain.kNN.utility;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,12 +49,19 @@ public class PropertyLoaderTest {
 
     @Before
     public void setUp() throws Exception {
-        mockStatic(FileLoader.class);
-        when(FileLoader.loadFile()).thenReturn(PROPERTIES);
+
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        Map<String, String> propertyValues = Whitebox.getInternalState(PropertyLoader.class, "propertyValues");
+        propertyValues.clear();
     }
 
     @Test
     public void loadPropertyFile() {
+        mockStatic(FileLoader.class);
+        when(FileLoader.loadFile()).thenReturn(PROPERTIES);
         PropertyLoader.loadPropertyFile();
         Map<String, String> propertyValues = Whitebox.getInternalState(PropertyLoader.class, "propertyValues");
         assertProperties(propertyValues);
@@ -75,13 +83,14 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_HOST, HOST);
 
         assertEquals(HOST, PropertyLoader.getHost());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
     public void getHost_onValueException() throws Exception{
+
         Map<String, String> propertyValues = Whitebox.getInternalState(PropertyLoader.class, "propertyValues");
-        propertyValues.clear();
+        System.out.println("HOST "+propertyValues.get(Constants.PROPERTY_KEY_HOST));
+
         PropertyLoader.getHost();
     }
 
@@ -91,13 +100,10 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_PORT, PORT);
 
         assertEquals(Integer.parseInt(PORT), PropertyLoader.getPort());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
     public void getPort_onValueException() throws Exception {
-        Map<String, String> propertyValues = Whitebox.getInternalState(PropertyLoader.class, "propertyValues");
-        propertyValues.clear();
         PropertyLoader.getPort();
     }
 
@@ -107,7 +113,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_PORT, WRONG_PORT);
 
         PropertyLoader.getPort();
-        propertyValues.clear();
     }
 
     @Test
@@ -116,7 +121,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_DATASET, DATASET);
 
         assertEquals(DATASET, PropertyLoader.getDataset());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
@@ -130,7 +134,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_FROMTIMESTAMP, FROM);
 
         assertEquals(FROM, PropertyLoader.getFromTimeStamp());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
@@ -144,7 +147,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_TOTIMESTAMP, TO);
 
         assertEquals(TO, PropertyLoader.getToTimeStamp());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
@@ -158,7 +160,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_GEOHASHES, GEOHASHES);
 
         assertArrayEquals(GEOHASHES.split(Constants.SEPARATOR_COMMA), PropertyLoader.getGeoHashes());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
@@ -172,7 +173,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_GEOHASHES, EMPTY_GEOHASHES);
 
         PropertyLoader.getGeoHashes();
-        propertyValues.clear();
     }
 
     @Test
@@ -181,7 +181,6 @@ public class PropertyLoaderTest {
         propertyValues.put(Constants.PROPERTY_KEY_INTERMEDIATE_OUTPUT_FILE, INTERMEDIATE_FILE);
 
         assertEquals(INTERMEDIATE_FILE, PropertyLoader.getIntermediateFile());
-        propertyValues.clear();
     }
 
     @Test(expected = ValueNotFoundException.class)
