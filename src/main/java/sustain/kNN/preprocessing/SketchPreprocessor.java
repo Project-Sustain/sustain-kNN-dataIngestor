@@ -2,17 +2,19 @@ package sustain.kNN.preprocessing;
 
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
+import org.bson.Document;
+import sustain.kNN.mongodb.DocGenerator;
+import sustain.kNN.mongodb.DataInjestor;
 import sustain.kNN.utility.DateTimeExtractor;
 import sustain.kNN.utility.PropertyLoader;
 import sustain.kNN.utility.exceptions.ValueNotFoundException;
 import sustain.synopsis.common.CommonUtil;
+import sustain.synopsis.common.ExtStrand;
 import sustain.synopsis.common.ProtoBuffSerializedStrand;
 import sustain.synopsis.common.Strand;
 import sustain.synopsis.dht.store.services.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by laksheenmendis on 6/11/20 at 3:39 PM
@@ -24,16 +26,21 @@ public class SketchPreprocessor {
         PropertyLoader.loadPropertyFile();
 
         try {
-            Map<String, Strand> aggregatedStrands = loadSketches();
+            List<ExtStrand> strandList = loadSketches();
+            List<Document> documents = DocGenerator.generate(strandList);
 
+            System.out.println(documents.get(0).toString());
 
-        } catch (IOException e) {
+            DataInjestor connection = new DataInjestor();
+            //connection.saveDocuments(documents);
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    private static Map<String, Strand> loadSketches() throws IOException, ValueNotFoundException {
+    private static List<ExtStrand> loadSketches() throws ValueNotFoundException {
         Channel channel = ManagedChannelBuilder.forAddress(PropertyLoader.getHost(), PropertyLoader.getPort()).usePlaintext().build();
         TargetedQueryServiceGrpc.TargetedQueryServiceBlockingStub stub =
                 TargetedQueryServiceGrpc.newBlockingStub(channel);
@@ -87,7 +94,13 @@ public class SketchPreprocessor {
 
         System.out.println("---- Aggregated Strands -----");
         System.out.println("Total Count: " + aggregatedStrands.size());
-//        for (Strand s : aggregatedStrands.values()) {
+
+        List<ExtStrand> extStrandList = new ArrayList<>();
+        for (Strand s : aggregatedStrands.values()) {
+
+            ExtStrand extStrand = new ExtStrand(s.getGeohash(), s.getFromTimeStamp(), s.getToTimestamp(), s.getPath());
+            extStrandList.add(extStrand);
+
 //            System.out.println("--");
 //            System.out.println("Geohash: " + s.getGeohash());
 //            System.out.println("From Timestamp: " + s.getFromTimeStamp());
@@ -101,9 +114,9 @@ public class SketchPreprocessor {
 //            System.out.println("Maxes: " + Arrays.toString(stats.maxes()));
 
 //            s.serialize(dataOutputStream);
-//        }
+        }
 //        dataOutputStream.close();
 
-        return aggregatedStrands;
+        return extStrandList;
     }
 }
