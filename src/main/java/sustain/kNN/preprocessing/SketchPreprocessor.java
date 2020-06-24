@@ -3,8 +3,8 @@ package sustain.kNN.preprocessing;
 import io.grpc.Channel;
 import io.grpc.ManagedChannelBuilder;
 import org.bson.Document;
-import sustain.kNN.mongodb.DocGenerator;
 import sustain.kNN.mongodb.DataInjestor;
+import sustain.kNN.mongodb.DocGenerator;
 import sustain.kNN.utility.DateTimeExtractor;
 import sustain.kNN.utility.PropertyLoader;
 import sustain.kNN.utility.exceptions.ValueNotFoundException;
@@ -13,7 +13,6 @@ import sustain.synopsis.common.ExtStrand;
 import sustain.synopsis.common.ProtoBuffSerializedStrand;
 import sustain.synopsis.common.Strand;
 import sustain.synopsis.dht.store.services.*;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -29,10 +28,10 @@ public class SketchPreprocessor {
             List<ExtStrand> strandList = loadSketches();
             List<Document> documents = DocGenerator.generate(strandList);
 
-            System.out.println(documents.get(0).toString());
+            System.out.println(documents.get(0).toJson());
 
             DataInjestor connection = new DataInjestor();
-            //connection.saveDocuments(documents);
+            connection.saveDocuments(documents);
 
         } catch (Exception e) {
             e.printStackTrace();

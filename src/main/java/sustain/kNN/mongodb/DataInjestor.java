@@ -1,6 +1,7 @@
 package sustain.kNN.mongodb;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.CommandResult;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
@@ -24,6 +25,29 @@ public class DataInjestor {
 
         boolean successfull = true;
         try {
+
+            /*// if we need to add shards here, use below code
+            // Add the shards
+            final int [] _shardPorts = { 27018, 27019 };
+            for (final int shardPort : _shardPorts) {
+                final CommandResult result
+                        = mongo.getDB("admin").command(new BasicDBObject("addshard", ("localhost:" + shardPort)));
+                System.out.println(result);
+            }
+            // Sleep for a bit to wait for all the nodes to be intialized.
+            Thread.sleep(5000);*/
+
+            // before sharding the collection, need to enable sharding at the DB level
+            Document result = mongoClient.getDatabase("admin").runCommand(new BasicDBObject("enablesharding", PropertyLoader.getMongoDBDB()));
+            if (result.get("ok") != null && (Integer)result.get("ok") == 1)
+            {
+                System.out.println(result.toJson());
+            }
+            else
+            {
+                System.out.println(result.toJson());
+                return false;
+            }
 
             //TODO change these accordingly
             final BasicDBObject shardKey = new BasicDBObject(PropertyLoader.getMongoDBShardKey(), "hashed");
