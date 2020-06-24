@@ -30,6 +30,8 @@ public class ExtStrand extends Strand {
         super(geohash, fromTimeStamp, toTimestamp, path);
         spatialRange = Geohash.decodeHash(this.getGeohash());
         features = this.getPath().stream().map(vertex -> vertex.getLabel().getDouble() + ",").collect(Collectors.joining());
+        stats = this.getPath().get(this.getPath().size() - 1).getData().statistics;
+        mean_features = getMeanFeaturesList(stats.means());
     }
 
     public ExtStrand(SerializationInputStream sis) throws IOException, SerializationException {
