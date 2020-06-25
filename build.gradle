@@ -24,7 +24,7 @@ jar {
 }
 
 dependencies {
-    implementation ('sustain-dht:common:0.1'){
+    compile ('sustain-dht:common:0.1'){
         version {branch = 'master'}
     }
 

@@ -4,6 +4,8 @@ import org.bson.Document;
 import sustain.kNN.Constants;
 import sustain.kNN.utility.exceptions.IncompatibleFeatures;
 import sustain.synopsis.common.ExtStrand;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,8 @@ import java.util.List;
  * Created by laksheenmendis on 6/23/20 at 2:23 PM
  */
 public class DocGenerator {
+
+    private static DecimalFormat df = new DecimalFormat("0.00");
 
     /**
      * Generates the documents to be stored on MongoDB
@@ -23,8 +27,8 @@ public class DocGenerator {
         for( ExtStrand strand: strandList )
         {
             Document innerDoc = new Document(Constants.GEOHASH, strand.getGeohash()).
-                    append(Constants.LATITUDE, strand.getMeanLat()).
-                    append(Constants.LONGITUDE, strand.getMeanLon());
+                    append(Constants.LATITUDE, df.format(strand.getMeanLat())).
+                    append(Constants.LONGITUDE, df.format(strand.getMeanLon()));
 
             //TODO need a more standard way to extract features and relevant feature name
             // this should be possible from metadata server
@@ -32,7 +36,7 @@ public class DocGenerator {
 
             try {
                 appendFeatures(innerDoc, featureArr, strand.getMeanFeatureArray());
-                Document doc1 = new Document("data", innerDoc);
+                Document doc1 = new Document("data", innerDoc).append(Constants.GEOHASH, strand.getGeohash());
                 documents.add(doc1);
             } catch (IncompatibleFeatures incompatibleFeatures) {
                 incompatibleFeatures.printStackTrace();
@@ -57,7 +61,7 @@ public class DocGenerator {
 
         for(int i=0; i<fieldNames.length; i++)
         {
-            document.append(fieldNames[i], meanFeatures[i]);
+            document.append(fieldNames[i], df.format(meanFeatures[i]));
         }
     }
 }

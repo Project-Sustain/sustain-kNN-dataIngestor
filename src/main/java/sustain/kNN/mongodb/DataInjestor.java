@@ -1,9 +1,6 @@
 package sustain.kNN.mongodb;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.CommandResult;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -38,15 +35,17 @@ public class DataInjestor {
             Thread.sleep(5000);*/
 
             // before sharding the collection, need to enable sharding at the DB level
-            Document result = mongoClient.getDatabase("admin").runCommand(new BasicDBObject("enablesharding", PropertyLoader.getMongoDBDB()));
-            if (result.get("ok") != null && (Integer)result.get("ok") == 1)
-            {
-                System.out.println(result.toJson());
+            try{
+                mongoClient.getDatabase("admin").runCommand(new BasicDBObject("enablesharding", PropertyLoader.getMongoDBDB()));
             }
-            else
+            catch (MongoCommandException e)
             {
-                System.out.println(result.toJson());
-                return false;
+                e.printStackTrace();
+                if(e.getCode() != 23) // this happens when the DB is already shard enabled, thus, we can proceed with it
+                {
+                    System.out.println(e.getResponse().toJson());
+                    return false;
+                }
             }
 
             //TODO change these accordingly
@@ -56,15 +55,16 @@ public class DataInjestor {
             cmd.put("key", shardKey);
 
             // Running the command to create the sharded collection
-            Document resultDoc = mongoClient.getDatabase("admin").runCommand(cmd);
-            if( resultDoc.get("ok") != null && (Integer)resultDoc.get("ok") == 1)
-            {
-                System.out.println("Sharded Collection created successfully");
+            try{
+                Document resultDoc = mongoClient.getDatabase("admin").runCommand(cmd);
             }
-            else
+            catch (MongoCommandException e)
             {
-                System.out.println("Sharded Collection creation failed");
-                return false;
+                if(e.getCode() != 23) // this happens when the collection is already shard enabled, thus, we can proceed with it
+                {
+                    System.out.println(e.getResponse().toJson());
+                    return false;
+                }
             }
 
             // If a database does not exist, MongoDB creates the database when you first store data for that database.
