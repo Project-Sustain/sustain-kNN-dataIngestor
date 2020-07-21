@@ -28,6 +28,9 @@ dependencies {
         version {branch = 'master'}
     }
 
+    // https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java
+    compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.12.2'
+
     // https://mvnrepository.com/artifact/org.mongodb/mongo-java-driver
     compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.11.0'
     // https://mvnrepository.com/artifact/io.grpc/grpc-all

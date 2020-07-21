@@ -13,6 +13,7 @@ import sustain.synopsis.common.ExtStrand;
 import sustain.synopsis.common.ProtoBuffSerializedStrand;
 import sustain.synopsis.common.Strand;
 import sustain.synopsis.dht.store.services.*;
+import sustain.synopsis.metadata.*;
 import java.util.*;
 
 /**
@@ -35,6 +36,32 @@ public class SketchPreprocessor {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    //TODO
+    private static void loadMetadata() throws ValueNotFoundException
+    {
+        Channel channel = ManagedChannelBuilder.forAddress(PropertyLoader.getHost(), PropertyLoader.getPort()).usePlaintext().build();
+        MetadataServiceGrpc.MetadataServiceBlockingStub stub = MetadataServiceGrpc.newBlockingStub(channel);
+
+        //TODO change the sessionID
+        DatasetSessions datasetSession = DatasetSessions.newBuilder().addSessionId(123L).setDatasetId(PropertyLoader.getDataset()).build();
+
+        GetMetadataRequest request = GetMetadataRequest.newBuilder().addDatasetSessions(datasetSession).build();
+        GetMetadataResponse response = stub.getMetadata(request);
+
+        List<String> featureNames = new ArrayList<>();
+        for( ProtoBuffSerializedDatasetMetadata metadata : response.getDatasetMetadataList())
+        {
+            for (ProtoBuffSerializedSessionMetadata sessionMetadata: metadata.getSessionMetadataList()) {
+                for(ProtoBuffSerializedBinConfiguration binConfiguration: sessionMetadata.getBinConfigurationList())
+                {
+                    featureNames.add(binConfiguration.getFeatureName());
+                    // TODO what are these values?
+                    //binConfiguration.getValuesList();
+                }
+            }
         }
     }
 
