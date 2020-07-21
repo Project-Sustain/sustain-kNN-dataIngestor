@@ -17,7 +17,7 @@ os:
   - linux
 
 jdk:
-  - oraclejdk9
+  - oraclejdk11
 
 notification:
   email: false
