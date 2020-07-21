@@ -4,10 +4,10 @@ services:
   - mongodb
 
 install:
-  - ./gradlew build
+  - true
 
 script:
-  - ./gradlew check
+  - ./gradlew build
 
 env:
   global:
