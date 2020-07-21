@@ -1,0 +1,24 @@
+language: java
+
+services:
+  - mongodb
+
+install:
+  - ./gradlew assemble
+
+script:
+  - ./gradlew check
+
+env:
+  global:
+    - GRADLE_OPTS=-Xmx256m
+
+os:
+  - linux
+
+jdk:
+  - oraclejdk8
+
+notification:
+  email: false
+
