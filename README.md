@@ -25,4 +25,4 @@ Further, the values of these properties will be used to populate the query
 to extract sketches from the storage.
 
 On the other hand, features of extracted sketches should be loaded from a metadata server and use the 
-feature names appropriately in Documents to be stored in MongoDB.
+feature names appropriately in Documents to be stored in MongoDB .
