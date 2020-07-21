@@ -4,7 +4,7 @@ services:
   - mongodb
 
 install:
-  - ./gradlew assemble
+  - ./gradlew build
 
 script:
   - ./gradlew check
