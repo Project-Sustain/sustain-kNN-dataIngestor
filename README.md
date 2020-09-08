@@ -26,3 +26,6 @@ to extract sketches from the storage.
 
 On the other hand, features of extracted sketches should be loaded from a metadata server and use the 
 feature names appropriately in Documents to be stored in MongoDB .
+
+To run this, execute; (make sure config.properties file is in the same directory as the jar)
+java -jar sustain-kNN-1.0-SNAPSHOT.jar config.properties
