@@ -9,17 +9,20 @@ install:
 env:
   global:
     - GRADLE_OPTS=-Xmx256m
-    - CC_TEST_REPORTER_ID=38a50b8062a60535a73eae315ac113c0d91824ca2bcd9af42d225aad15c60f4e
+#    - CC_TEST_REPORTER_ID=b18a561e80f06fc6795667b08bc519a108a5e0be79bea08431157f2d78d2df7e
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - bundle exec rspec
   - ./gradlew build
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
+
+branches:
+  only:
+    - master
 
 os:
   - linux
